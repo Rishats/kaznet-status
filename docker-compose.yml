@@ -1,0 +1,13 @@
+version: '3.5'
+
+services:
+  app:
+    container_name: kaznet-status
+    image: skeletondocker/kaznet-status:latest
+    environment:
+      TZ: Asia/Almaty
+      TELEGRAM_BOT_TOKEN: 5025688129:AAHnvGRZJxG1d8hi6ErOoN0q1bboJC4V83Q
+      TELEGRAM_BOT_CHAT_ID: -618200858
+    restart: unless-stopped
+
+    command: kaznet-status
