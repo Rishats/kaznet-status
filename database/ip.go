@@ -55,10 +55,17 @@ func GetIpInfo(iip string) *geoip2.City {
 
 func CheckAllRegionsStatus() {
 	ips := []string{
-		//"8.8.4.4",
+		//"Almaty",
 		"188.0.151.149", // Almaty STS
-		"91.185.6.14",   // Almaty JST Telecom
-		"2.133.19.254",
+		"178.91.21.193", // JSC
+		"2.133.20.69",   // JSC
+		"217.76.64.24",  // ALTEL
+		"37.99.46.127",  // KAR-TEL-AS - Kar-Tel LLC
+		//"Astana",
+		"2.133.19.254", // Random Astana
+		"5.34.45.254",
+		"37.17.180.126",
+		"89.218.79.230",
 	}
 
 	for _, ip := range ips {
