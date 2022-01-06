@@ -13,13 +13,17 @@ func CheckIfIPFromKZ(geoip *geoip2.City) {
 	if geoip.Country.IsoCode == "KZ" {
 
 		type Info struct {
-			CityName string
-			GeoIp    *geoip2.City
+			CityName        string
+			GeoIp           *geoip2.City
+			CitySubdivision string
+			TimeZone        string
 		}
 
 		templateData := Info{
-			CityName: geoip.City.Names["en"],
-			GeoIp:    geoip,
+			CityName:        geoip.City.Names["en"],
+			GeoIp:           geoip,
+			CitySubdivision: geoip.Subdivisions[0].Names["en"],
+			TimeZone:        geoip.Location.TimeZone,
 		}
 		go utils.Notify("ip.gohtml", nil, templateData)
 
