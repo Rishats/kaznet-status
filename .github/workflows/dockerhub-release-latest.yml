@@ -29,13 +29,13 @@ jobs:
         with:
           context: .
           push: true
-          tags: skeletondocker/${{ github.repository }}:main_${{ github.sha }}
+          tags: skeletondocker/kaznet-status:main_${{ github.sha }}
 
       - name: deploy to cluster
         uses: steebchen/kubectl@v2.0.0
         with: # defaults to latest kubectl binary version
           config: ${{ secrets.KUBE_CONFIG_DATA }}
-          command: set image --record deployment/kaznet-status container=${{ github.repository }}:main_${{ github.sha }} --insecure-skip-tls-verify
+          command: set image --record deployment/kaznet-status container=kaznet-status:main_${{ github.sha }} --insecure-skip-tls-verify
           
       - name: verify deployment
         uses: steebchen/kubectl@v2.0.0
