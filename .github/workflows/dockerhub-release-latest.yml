@@ -39,4 +39,4 @@ jobs:
           KUBE_CERTIFICATE: ${{ secrets.KUBE_CERTIFICATE }}
           KUBE_TOKEN: ${{ secrets.KUBE_TOKEN }}
         with:
-          args: set image deployment/kaznet-status kaznet-status=skeletondocker/kaznet-status:latest -n=kaznet-status-production
+          args: set image deployment/kaznet-status kaznet-status=skeletondocker/kaznet-status:latest -n=kaznet-status-production --insecure-skip-tls-verify
