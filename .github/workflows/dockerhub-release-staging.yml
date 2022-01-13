@@ -34,7 +34,7 @@ jobs:
       - name: deploy to cluster
         uses: steebchen/kubectl@v2.0.0
         with: # defaults to latest kubectl binary version
-          config: ${{ secrets.KUBE_CONFIG_DATA }}
+          config: ${{ secrets.KUBE_CONFIG_DATA_STAGING }}
           command: set image deployment/kaznet-status kaznet-status=skeletondocker/kaznet-status:staging_${{ github.sha }} --insecure-skip-tls-verify
           
       - name: verify deployment
