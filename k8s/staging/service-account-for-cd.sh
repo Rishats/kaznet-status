@@ -1,16 +1,16 @@
 #!/bin/bash
 
 # Variables
-SERVICE_ACCOUNT_NAME="kaznet-status-production-service-account"
+SERVICE_ACCOUNT_NAME="kaznet-status-staging-service-account"
 CONTEXT=$(kubectl config current-context)
-NAMESPACE=kaznet-status-production
-NEW_CONTEXT=kaznet-status-production
-KUBECONFIG_FILE="kubeconfig-kaznet-status-production"
+NAMESPACE=kaznet-status-staging
+NEW_CONTEXT=kaznet-status-staging
+KUBECONFIG_FILE="kubeconfig-kaznet-status-staging"
 
 
 # Get Service account Bearer token if need
-KSERVICE=$(kubectl get serviceaccount $SERVICE_ACCOUNT_NAME -o=jsonpath='{.secrets[0].name}' -n kaznet-status-production)
-KSECRET=$(kubectl get secrets  $KSERVICE  -o=jsonpath='{.data.token}' -n kaznet-status-production | base64 --decode )
+KSERVICE=$(kubectl get serviceaccount $SERVICE_ACCOUNT_NAME -o=jsonpath='{.secrets[0].name}' -n kaznet-status-staging)
+KSECRET=$(kubectl get secrets  $KSERVICE  -o=jsonpath='{.data.token}' -n kaznet-status-staging | base64 --decode )
 echo "----------------------------------------------"
 echo ""
 echo $KSECRET

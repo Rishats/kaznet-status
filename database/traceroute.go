@@ -24,7 +24,7 @@ func trace(iip string) []net.IP {
 	}
 	defer t.Close()
 	err := t.Trace(context.Background(), net.ParseIP(iip), func(reply *traceroute.Reply) {
-		log.Printf("%d. %v %v", reply.Hops, reply.IP, reply.RTT)
+		//log.Printf("%d. %v %v", reply.Hops, reply.IP, reply.RTT)
 		replyIps = append(replyIps, reply.IP)
 	})
 	if err != nil {

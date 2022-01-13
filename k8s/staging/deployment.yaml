@@ -1,0 +1,96 @@
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: kaznet-status-staging
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: kaznet-status-staging-service-account
+  namespace: kaznet-status-staging
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: kaznet-status-staging-role
+  namespace: kaznet-status-staging
+rules:
+  - apiGroups:
+        - ""
+        - apps
+        - autoscaling
+        - batch
+        - extensions
+        - policy
+        - rbac.authorization.k8s.io
+    resources:
+      - pods
+      - componentstatuses
+      - configmaps
+      - daemonsets
+      - deployments
+      - events
+      - endpoints
+      - horizontalpodautoscalers
+      - ingress
+      - jobs
+      - limitranges
+      - namespaces
+      - nodes
+      - pods
+      - persistentvolumes
+      - persistentvolumeclaims
+      - resourcequotas
+      - replicasets
+      - replicationcontrollers
+      - serviceaccounts
+      - services
+    verbs: ["get", "list", "watch", "create", "update", "patch", "delete"]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: kaznet-status-staging-role-binding
+subjects:
+- namespace: kaznet-status-staging
+  kind: ServiceAccount
+  name: kaznet-status-staging-service-account 
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: kaznet-status-staging-role
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    io.kompose.service: kaznet-status
+  name: kaznet-status
+  namespace: kaznet-status-staging
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      io.kompose.service: kaznet-status
+  strategy: {}
+  template:
+    metadata:
+      labels:
+        io.kompose.service: kaznet-status
+    spec:
+      containers:
+        - args:
+            - kaznet-status
+          env:
+            - name: TELEGRAM_BOT_CHAT_ID
+              value: "your-chat-id"
+            - name: TELEGRAM_BOT_TOKEN
+              value: your-bot-token
+            - name: TZ
+              value: Asia/Almaty
+          image: skeletondocker/kaznet-status:latest
+          name: kaznet-status
+          resources: {}
+      restartPolicy: Always
+status: {}

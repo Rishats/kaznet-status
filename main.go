@@ -2,14 +2,21 @@ package main
 
 import (
 	"fmt"
-	"kaznet-status/database"
-
 	"github.com/jasonlvhit/gocron"
+	"kaznet-status/database"
+	"kaznet-status/pkg/utils"
 )
 
-func tasks() {
-	database.CheckAllRegionsStatus()
-	gocron.Every(5).Minute().Do(database.CheckAllRegionsStatus)
+func main() {
+	// database init
+	memDb := database.InitMemDb()
+
+	go utils.InitPrometheus()
+	go database.CheckAllRegionsStatus(memDb)
+
+	// cron jobs
+	go gocron.Every(5).Minute().Do(database.CheckAllRegionsStatus, memDb)
+	go gocron.Every(30).Second().Do(utils.InitWorker, memDb)
 
 	// remove, clear and next_run
 	_, time := gocron.NextRun()
@@ -17,9 +24,4 @@ func tasks() {
 
 	// function Start start all the pending jobs
 	<-gocron.Start()
-}
-
-// Endpoint
-func main() {
-	tasks()
 }

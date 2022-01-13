@@ -1,43 +1,46 @@
 package database
 
 import (
-	"fmt"
-	"kaznet-status/pkg/utils"
+	"github.com/hashicorp/go-memdb"
 	"log"
 	"net"
 
 	"github.com/oschwald/geoip2-golang"
 )
 
-func CheckIfIPFromKZ(geoip *geoip2.City) {
-	if geoip.Country.IsoCode == "KZ" {
-
-		type Info struct {
-			CityName        string
-			GeoIp           *geoip2.City
-			CitySubdivision string
-			TimeZone        string
-		}
-
-		templateData := Info{
-			CityName:        geoip.City.Names["en"],
-			GeoIp:           geoip,
-			CitySubdivision: geoip.Subdivisions[0].Names["en"],
-			TimeZone:        geoip.Location.TimeZone,
-		}
-		go utils.Notify("ip.gohtml", nil, templateData)
-
-		fmt.Printf("FROM KAZNET! INTERNET AVAILABLE \n")
-		fmt.Printf("Portuguese (BR) city name: %v\n", geoip.City.Names["en"])
-		if len(geoip.Subdivisions) > 0 {
-			fmt.Printf("English subdivision name: %v\n", geoip.Subdivisions[0].Names["en"])
-		}
-		fmt.Printf("Russian country name: %v\n", geoip.Country.Names["ru"])
-		fmt.Printf("ISO country code: %v\n", geoip.Country.IsoCode)
-		fmt.Printf("Time zone: %v\n", geoip.Location.TimeZone)
-		fmt.Printf("Coordinates: %v, %v\n", geoip.Location.Latitude, geoip.Location.Longitude)
+func CheckIfIPFromKZ(ip string, lastIpFromTraceroute string, geoip *geoip2.City, memDb *memdb.MemDB) {
+	var citySubdivision string
+	if len(geoip.Subdivisions) > 0 {
+		citySubdivision = geoip.Subdivisions[0].Names["en"]
 	} else {
-		fmt.Printf("NO: ")
+		citySubdivision = "not set"
+	}
+
+	var cityName string
+	if len(geoip.City.Names["en"]) != 0 {
+		cityName = geoip.City.Names["en"]
+	} else {
+		cityName = "not set"
+	}
+
+	if geoip.Country.IsoCode == "KZ" {
+		// Create a write transaction
+		txn := memDb.Txn(true)
+		// Insert some ips in to memDb
+		if err := txn.Insert("ip", &IP{ip, lastIpFromTraceroute, cityName, citySubdivision, geoip.Location.Longitude, geoip.Location.Latitude, 1}); err != nil {
+			panic(err)
+		}
+		// Commit the transaction
+		txn.Commit()
+	} else if geoip.Country.IsoCode != "KZ" && ip == lastIpFromTraceroute {
+		// Create a write transaction
+		txn := memDb.Txn(true)
+		// Insert some ips in to memDb
+		if err := txn.Insert("ip", &IP{ip, lastIpFromTraceroute, cityName, citySubdivision, geoip.Location.Longitude, geoip.Location.Latitude, 0}); err != nil {
+			panic(err)
+		}
+		// Commit the transaction
+		txn.Commit()
 	}
 }
 
@@ -57,7 +60,7 @@ func GetIpInfo(iip string) *geoip2.City {
 	return record
 }
 
-func CheckAllRegionsStatus() {
+func CheckAllRegionsStatus(memDb *memdb.MemDB) {
 	ips := []string{
 		//"Almaty",
 		"188.0.151.149", // Almaty STS
@@ -75,7 +78,7 @@ func CheckAllRegionsStatus() {
 	for _, ip := range ips {
 		lastIpFromTraceroute := TracerouteLastHoopIP(ip)
 		geoip := GetIpInfo(lastIpFromTraceroute)
-		CheckIfIPFromKZ(geoip)
+		CheckIfIPFromKZ(ip, lastIpFromTraceroute, geoip, memDb)
 	}
 
 }
