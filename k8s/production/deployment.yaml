@@ -66,6 +66,8 @@ kind: Deployment
 metadata:
   labels:
     io.kompose.service: kaznet-status
+    prometheus.io/scrape: 'true'
+    prometheus.io/port: '2112'
   name: kaznet-status
   namespace: kaznet-status-production
 spec:
@@ -94,3 +96,16 @@ spec:
           resources: {}
       restartPolicy: Always
 status: {}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: kaznet-status-production-service
+  namespace: kaznet-status-production
+spec:
+  selector:
+    app: kaznet-status
+  ports:
+    - protocol: TCP
+      port: 2112
+      targetPort: 2112
