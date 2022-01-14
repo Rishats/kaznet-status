@@ -23,6 +23,6 @@ RUN mkdir database
 COPY --from=build-env /app/kaznet-status/database/GeoLite2-City.mmdb /app/database/GeoLite2-City.mmdb
 ENV WORKDIR "/app/"
 ENV PATH "${WORKDIR}:${PATH}"
-EXPOSE 3000
+EXPOSE 2112
 
 CMD ["kaznet-status"]
