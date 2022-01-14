@@ -66,6 +66,8 @@ kind: Deployment
 metadata:
   labels:
     io.kompose.service: kaznet-status
+    prometheus.io/scrape: 'true'
+    prometheus.io/port: '2112'
   name: kaznet-status
   namespace: kaznet-status-staging
 spec:
@@ -89,8 +91,23 @@ spec:
               value: your-bot-token
             - name: TZ
               value: Asia/Almaty
-          image: skeletondocker/kaznet-status:latest
+          ports:
+            - containerPort: 2112
+          image: skeletondocker/kaznet-status:staging_89a3bf757e11f349753aed999335f886dd1fa2f7
           name: kaznet-status
           resources: {}
       restartPolicy: Always
 status: {}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: kaznet-status-staging-service
+  namespace: kaznet-status-staging
+spec:
+  selector:
+    app: kaznet-status
+  ports:
+    - protocol: TCP
+      port: 2112
+      targetPort: 2112
