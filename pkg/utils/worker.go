@@ -68,6 +68,7 @@ func getCityWithInternet(memDb *memdb.MemDB) []database.IP {
 		ipData := obj.(*database.IP)
 		if ipData.Status == 1 {
 			ips = append(ips, *ipData)
+			go ChangeIpData(ipData)
 			fmt.Printf("%s %s %s  %b\n", ipData.IP, ipData.Lip, ipData.City, ipData.Status)
 		}
 	}
@@ -94,6 +95,7 @@ func getCityWithoutInternet(memDb *memdb.MemDB) []database.IP {
 		ipData := obj.(*database.IP)
 		if ipData.Status == 0 {
 			ips = append(ips, *ipData)
+			go ChangeIpData(ipData)
 			fmt.Printf("%s %s %s  %b\n", ipData.IP, ipData.Lip, ipData.City, ipData.Status)
 		}
 	}

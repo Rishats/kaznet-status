@@ -1,33 +1,33 @@
 package utils
 
 import (
-	"net/http"
-	"time"
-
+	"fmt"
 	"github.com/prometheus/client_golang/prometheus"
-	"github.com/prometheus/client_golang/prometheus/promauto"
 	"github.com/prometheus/client_golang/prometheus/promhttp"
+	"kaznet-status/database"
+	"net/http"
 )
-
-func recordMetrics() {
-	go func() {
-		for {
-			opsProcessed.Inc()
-			time.Sleep(2 * time.Second)
-		}
-	}()
-}
 
 var (
-	opsProcessed = promauto.NewCounter(prometheus.CounterOpts{
-		Name: "kaznetstatus_processed_ops_total",
-		Help: "The total number of processed events",
-	})
+	IPsStatus = prometheus.NewGaugeVec(
+		prometheus.GaugeOpts{
+			Name: "ips_status",
+			Help: "Info about IP status.",
+		},
+		[]string{"ip", "lat", "lon", "city"},
+	)
 )
 
-func InitPrometheus() {
-	recordMetrics()
+func init() {
+	// Metrics have to be registered to be exposed:
+	prometheus.MustRegister(IPsStatus)
+}
 
+func InitPrometheus() {
 	http.Handle("/metrics", promhttp.Handler())
 	http.ListenAndServe(":2112", nil)
+}
+
+func ChangeIpData(ipData *database.IP) {
+	IPsStatus.With(prometheus.Labels{"ip": ipData.IP, "lat": fmt.Sprintf("%f", ipData.Lat), "lon": fmt.Sprintf("%f", ipData.Lon), "city": ipData.City}).Set(float64(ipData.Status))
 }
