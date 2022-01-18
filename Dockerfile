@@ -2,7 +2,6 @@
 FROM golang:1.17.5 AS build-env
 ENV GO111MODULE=on
 ENV CGO_ENABLED=0
-ENV GOARCH=arm64
 
 WORKDIR /app/kaznet-status
 COPY go.mod .

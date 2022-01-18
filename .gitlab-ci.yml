@@ -33,8 +33,6 @@ stages:
       --use-new-run
       --build-arg ENVI=$ENVI
   interruptible: true
-  tags:
-    - deployer
 
 # .deploy:template: &deploy_definition
 #   stage: deploy
@@ -52,8 +50,6 @@ build:production:
   variables:
     ENVI: $PRODUCTION_ENVI
     <<: *vars_production
-  tags:
-    - deployer
 
 # deploy:production:
 #   <<: *deploy_definition

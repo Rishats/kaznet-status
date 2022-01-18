@@ -92,6 +92,7 @@ spec:
             - name: TZ
               value: Asia/Almaty
           image: skeletondocker/kaznet-status:latest
+          #image: skeletondocker/kaznet-status:latest_arm64 if ARM Arch needed
           name: kaznet-status
           resources: {}
       restartPolicy: Always

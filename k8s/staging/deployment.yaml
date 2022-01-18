@@ -94,6 +94,7 @@ spec:
           ports:
             - containerPort: 2112
           image: skeletondocker/kaznet-status:staging_89a3bf757e11f349753aed999335f886dd1fa2f7
+          #image: skeletondocker/kaznet-status:staging_arm64_githubsha if ARM Arch needed
           name: kaznet-status
           resources: {}
       restartPolicy: Always

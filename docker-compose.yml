@@ -4,6 +4,7 @@ services:
   app:
     container_name: kaznet-status
     image: skeletondocker/kaznet-status:latest
+    #image: skeletondocker/kaznet-status:latest_arm64 if ARM Arch needed
     environment:
       TZ: Asia/Almaty
       TELEGRAM_BOT_TOKEN: your-bot-token 
